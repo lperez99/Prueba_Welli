@@ -13,7 +13,7 @@ def get_db():
     finally:
         db.close()
 
-@router.get("/books")
+@router.get("/")
 def list_books(db: Session = Depends(get_db)):
     books = db.query(Book).all()
     return [
@@ -23,11 +23,12 @@ def list_books(db: Session = Depends(get_db)):
             "author": b.author,
             "category": b.category,
             "status": b.status,
-            "stock_physical": b.stock_physical,
+            "stock_physical_for_sell": b.stock_physical_for_sell,
             "stock_digital": b.stock_digital,
-            "min_stock": b.min_stock,
+            "min_stock_for_sell": b.min_stock_for_sell,
             "price_physical": b.price_physical,
-            "price_digital": b.price_digital
+            "price_digital": b.price_digital,
+            "stock_for_loan": b.stock_for_loan
         }
         for b in books
     ]

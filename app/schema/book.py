@@ -1,5 +1,3 @@
-
-
 from enum import Enum
 from pydantic import BaseModel, field_validator
 
@@ -9,7 +7,6 @@ class BookStatus(str, Enum):
     reserved = "reserved"
     maintenance = "maintenance"
 
-
 class BookCategory(str, Enum):
     fiction = "fiction"
     academic = "academic"
@@ -17,18 +14,17 @@ class BookCategory(str, Enum):
     research = "research"
     history = "history"
 
-
 class BookBase(BaseModel):
     title: str
     author: str
     category: BookCategory
     status: BookStatus = BookStatus.available
-    stock_physical: int
-    stock_digital: int = -1  # Default to "infinite" for digital stock
-    min_stock: int
+    stock_physical_for_sell: int
+    stock_digital: int = -1  
+    min_stock_for_sell: int
     price_physical: float
     price_digital: float
-
+    stock_for_loan: int
 
 class BookCreate(BookBase):
     pass
@@ -36,10 +32,5 @@ class BookCreate(BookBase):
 
 class BookOut(BookBase):
     id: int
-    
-    # @field_validator("stock_digital", mode="before")
-    # def handle_infinite_stock(cls, value):
-    #     return "infinite" if value == -1 else value
-
     class Config:
         orm_mode = True

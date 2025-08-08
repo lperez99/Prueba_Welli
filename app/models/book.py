@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Enum, Float
 from app.database import Base
 import enum
+from sqlalchemy.orm import relationship
 
 class BookStatus(str, enum.Enum):
     available = "available"
@@ -23,11 +24,14 @@ class Book(Base):
     author = Column(String, nullable=False)
     category = Column(Enum(BookCategory), nullable=False)
     status = Column(Enum(BookStatus), default=BookStatus.available)
+    loans = relationship("Loan", back_populates="book")
+
 
     # Inventario
-    stock_physical = Column(Integer, default=0)
+    stock_physical_for_sell = Column(Integer, default=0)
     stock_digital = Column(Integer, default=-1)
-    min_stock = Column(Integer, default=1)  # Punto de reorden
+    stock_for_loan = Column(Integer, default=0)  
+    min_stock_for_sell = Column(Integer, default=1)  # Punto de reorden
 
     # Precios
     price_physical = Column(Float, nullable=False)
