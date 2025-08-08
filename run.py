@@ -2,6 +2,7 @@ from app.database import SessionLocal, Base, engine
 from app.models.user import User, UserType
 from app.models.book import Book, BookStatus, BookCategory
 from app.models.loan import Loan, LoanStatus
+from app.models.reservation import Reservation, StatusReservation
 from datetime import date, timedelta
 
 # Crear tablas
@@ -28,7 +29,7 @@ sample_books = [
         "min_stock_for_sell": 5,
         "price_physical": 25000.0,
         "price_digital": 15000.0,
-        "stock_for_loan": 5
+        "stock_for_loan": 0
     },
     {
         "title": "Cuentos Fantásticos",
@@ -159,3 +160,27 @@ if db.query(Loan).count() == 0:
     print("Préstamos insertados correctamente ✅")
 else:
     print("La tabla de préstamos ya tiene datos.")
+
+# ---- SIMULAR RESERVAS ----
+users = db.query(User).all()
+books = db.query(Book).all()
+
+if db.query(Reservation).count() == 0:
+    # Reserva de Alice Johnson para el segundo libro (ya prestado)
+    reservation1 = Reservation(
+        user_id=users[0].id,
+        book_id=books[1].id,
+        status=StatusReservation.pending
+    )
+    # Reserva de Bob Smith para el primer libro (ya prestado)
+    reservation2 = Reservation(
+        user_id=users[1].id,
+        book_id=books[0].id,
+        status=StatusReservation.pending
+    )
+    db.add(reservation1)
+    db.add(reservation2)
+    db.commit()
+    print("Reservas insertadas correctamente ✅")
+else:
+    print("La tabla de reservas ya tiene datos.")
