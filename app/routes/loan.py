@@ -30,3 +30,11 @@ def extend_loan_endpoint(loan_id: int, db: Session = Depends(get_db)):
 @router.get("/", response_model=list[LoanOut])
 def list_loans(db: Session = Depends(get_db)):
     return loan_crud.get_loans(db)
+
+@router.put("/{loan_id}/return", response_model=LoanOut)
+def return_loan_endpoint(loan_id: int, db: Session = Depends(get_db)):
+    try:
+        return loan_crud.return_loan(db, loan_id)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
