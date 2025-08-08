@@ -3,6 +3,7 @@ from datetime import date, timedelta
 from app.models.loan import Loan, LoanStatus
 from app.models.user import User
 from app.models.book import Book
+from app.models.reservation import Reservation
 from app.schema.loan import LoanCreate
 
 def create_loan(db: Session, data: LoanCreate):
@@ -39,10 +40,27 @@ def create_loan(db: Session, data: LoanCreate):
     if existing_loan:
         raise ValueError("No puedes prestar el mismo libro dos veces seguidas sin devolverlo.")
 
-    # Validar stock de préstamos
+    
     if book.stock_for_loan < 1:
-        raise ValueError("No hay ejemplares físicos disponibles para préstamo.")
+        existing_reservation = db.query(Reservation).filter(
+            Reservation.user_id == user.id,
+            Reservation.book_id == book.id
+        ).first()
+        if existing_reservation:
+            raise ValueError("Ya tienes una reserva activa para este libro.")
+        
+        reservation = Reservation(user_id=user.id, book_id=book.id)
+        db.add(reservation)
+        db.commit()
+        raise ValueError("No hay ejemplares disponibles. Se ha creado una reserva para este libro.")
+    
+    pending_reservation = db.query(Reservation).filter(
+        Reservation.book_id == book.id
+    ).order_by(Reservation.created_at.asc()).first()
 
+    if pending_reservation:
+        raise ValueError("Este libro tiene reservas pendientes. No se puede prestar directamente.")
+    
     end_date = date.today() + timedelta(days=loan_days)
 
     loan = Loan(
@@ -72,7 +90,10 @@ def extend_loan(db, loan_id):
     loan = db.query(Loan).filter(Loan.id == loan_id).first()
     
     if not loan:
-        raise ValueError("Loan not found")
+        raise ValueError("Prestamo no encontrado")
+    
+    if loan.status != LoanStatus.active:
+        raise ValueError("El préstamo no está activo, no se puede extender.")
     
     if loan.extended:
         raise ValueError("El prestamo ya ha sido extendido antes, no se puede volver a extender.")
@@ -88,4 +109,47 @@ def extend_loan(db, loan_id):
     db.refresh(loan)
     return loan
 
+def return_loan(db: Session, loan_id: int):
+    loan = db.query(Loan).filter(Loan.id == loan_id).first()
+    if not loan:
+        raise ValueError("Préstamo no encontrado")
+    if loan.status != LoanStatus.active:
+        raise ValueError("El préstamo no está activo")
+
+    loan.status = LoanStatus.returned
+    loan.returned = True
+
+    book = db.query(Book).filter(Book.id == loan.book_id).first()
+    if not book:
+        raise ValueError("Libro no encontrado")
+
+    # Buscar la reserva más antigua para este libro
+    reservation = db.query(Reservation).filter(
+        Reservation.book_id == book.id
+    ).order_by(Reservation.created_at.asc()).first()
+
+    if reservation:
+        # Crear préstamo para el usuario con reserva
+        user = db.query(User).filter(User.id == reservation.user_id).first()
+        if user:
+            LOAN_DAYS = {"student": 14, "teacher": 30, "visitor": 7}
+            user_type = getattr(user, "type", "visitor")
+            loan_days = LOAN_DAYS.get(user_type, 7)
+            new_loan = Loan(
+                user_id=user.id,
+                book_id=book.id,
+                start_date=date.today(),
+                end_date=date.today() + timedelta(days=loan_days),
+                returned=False,
+                extended=False,
+                status=LoanStatus.active
+            )
+            db.add(new_loan)
+        reservation.status = "completed" 
+    else:
+        book.stock_for_loan += 1
+
+    db.commit()
+    db.refresh(loan)
+    return loan
 
