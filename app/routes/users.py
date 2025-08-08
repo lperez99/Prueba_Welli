@@ -6,7 +6,6 @@ from app.models.user import User
 
 router = APIRouter()
 
-# Dependencia para obtener la sesión de DB
 def get_db():
     db = SessionLocal()
     try:
