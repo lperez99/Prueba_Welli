@@ -1,0 +1,23 @@
+from app.database import Base
+from sqlalchemy import Column, Integer, Float, ForeignKey, String, DateTime, Enum
+from sqlalchemy.orm import relationship
+from datetime import datetime
+import enum
+
+class PurchaseType(str, enum.Enum):
+    physical = "physical"
+    digital = "digital"
+
+class Purchase(Base):
+    __tablename__ = "purchases"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    book_id = Column(Integer, ForeignKey("books.id"), nullable=False)
+    quantity = Column(Integer, nullable=False)
+    total_price = Column(Float, nullable=False)
+    type = Column(Enum(PurchaseType), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User")
+    book = relationship("Book")

@@ -3,6 +3,7 @@ from app.models.user import User, UserType
 from app.models.book import Book, BookStatus, BookCategory
 from app.models.loan import Loan, LoanStatus
 from app.models.reservation import Reservation, StatusReservation
+from app.models.purchase import Purchase, PurchaseType
 from datetime import date, timedelta
 
 # Crear tablas
