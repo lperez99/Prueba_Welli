@@ -25,6 +25,7 @@ class Book(Base):
     category = Column(Enum(BookCategory), nullable=False)
     status = Column(Enum(BookStatus), default=BookStatus.available)
     loans = relationship("Loan", back_populates="book")
+    reservations = relationship("Reservation", back_populates="book")
 
 
     # Inventario

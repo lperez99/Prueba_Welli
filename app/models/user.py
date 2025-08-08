@@ -19,6 +19,7 @@ class User(Base):
     fines = Column(Integer, default=0.0)
     books_on_loan = Column(Integer, default=0)  # Libros actualmente prestados
     loans = relationship("Loan", back_populates="user")
+    reservations = relationship("Reservation", back_populates="user")
 
     def max_books_allowed(self):
         """Devuelve el máximo de libros según el tipo de usuario."""
