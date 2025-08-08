@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Float, Enum
 from app.database import Base
 import enum
+from sqlalchemy.orm import relationship
 
 # Definición de tipos de usuario
 class UserType(str, enum.Enum):
@@ -17,6 +18,7 @@ class User(Base):
     type = Column(Enum(UserType), nullable=False)
     fines = Column(Integer, default=0.0)
     books_on_loan = Column(Integer, default=0)  # Libros actualmente prestados
+    loans = relationship("Loan", back_populates="user")
 
     def max_books_allowed(self):
         """Devuelve el máximo de libros según el tipo de usuario."""
