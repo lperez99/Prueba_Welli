@@ -26,7 +26,7 @@ class Book(Base):
 
     # Inventario
     stock_physical = Column(Integer, default=0)
-    stock_digital = Column(Integer, default=0)
+    stock_digital = Column(Integer, default=-1)
     min_stock = Column(Integer, default=1)  # Punto de reorden
 
     # Precios
