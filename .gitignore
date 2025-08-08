@@ -1,2 +1,8 @@
 __pycache__/
 *.pyc
+test.db
+check_users.py
+test.db
+tests/
+services/
+utils/
