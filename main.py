@@ -6,8 +6,8 @@ app = FastAPI(title="Digital Library API")
 
 app.include_router(users.router, prefix="/users")
 app.include_router(books.router, prefix="/books")
-app.include_router(loans.router, prefix="/loans")
-app.include_router(purchases.router, prefix="/purchases")
+# app.include_router(loans.router, prefix="/loans")
+# app.include_router(purchases.router, prefix="/purchases")
 
 @app.get("/")
 def root():
