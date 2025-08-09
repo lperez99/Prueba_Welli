@@ -23,6 +23,7 @@ class Loan(Base):
     returned = Column(Boolean, default=False)
     extended = Column(Boolean, default=False)
     status = Column(SAEnum(LoanStatus), default=LoanStatus.active)
+    days_fined = Column(Integer, default=0)
 
     user = relationship("User", back_populates="loans")
     book = relationship("Book", back_populates="loans")
