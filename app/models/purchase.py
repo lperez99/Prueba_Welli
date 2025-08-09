@@ -3,7 +3,12 @@ from sqlalchemy import Column, Integer, Float, ForeignKey, String, DateTime, Enu
 from sqlalchemy.orm import relationship
 from datetime import datetime
 import enum
+from app.services import reservation
 
+class PurchaseStatus(str, enum.Enum):
+    pending = "pending"
+    approved = "approved"  
+    rejected = "rejected"
 class PurchaseType(str, enum.Enum):
     physical = "physical"
     digital = "digital"
@@ -17,6 +22,7 @@ class Purchase(Base):
     quantity = Column(Integer, nullable=False)
     total_price = Column(Float, nullable=False)
     type = Column(Enum(PurchaseType), nullable=False)
+    status = Column(Enum(PurchaseStatus), default=PurchaseStatus.pending)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User")
