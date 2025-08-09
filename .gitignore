@@ -4,7 +4,5 @@ test.db
 check_users.py
 test.db
 tests/
-services/
-utils/
 run.py
 digital-library-system/
