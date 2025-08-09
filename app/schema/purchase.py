@@ -6,6 +6,7 @@ class PurchaseCreate(BaseModel):
     book_id: int
     quantity: int
     type: str  # "physical" o "digital"
+    status: str = "pending"  # "pending", "completed", "cancelled"
 
 class PurchaseOut(PurchaseCreate):
     id: int

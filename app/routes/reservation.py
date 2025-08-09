@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.models.reservation import Reservation
 from app.schema.reservation import ReservationCreate, ReservationOut
-from app.crud import reservation as reservation_crud
+from app.services import reservation
 
 router = APIRouter()
 
@@ -20,7 +20,7 @@ def list_reservations(db: Session = Depends(get_db)):
 
 @router.post("/", response_model=ReservationOut)
 def create_reservation(reservation_in: ReservationCreate, db: Session = Depends(get_db)):
-    return reservation_crud.create_reservation(db, reservation_in)
+    return reservation.create_reservation(db, reservation_in)
 
 @router.delete("/{reservation_id}/canceled", response_model=dict)
 def confirmed_reservation(reservation_id: int, db: Session = Depends(get_db)):
