@@ -1,5 +1,27 @@
 # Prueba_Welli
 
+## Instrucciones rápidas para ejecutar el proyecto
+
+1. **Clona el repositorio:**
+   ```sh
+   git clone <URL_DEL_REPOSITORIO>
+   cd Prueba_Welli
+   ```
+
+2. **Dale permisos de ejecución al script de inicio (solo la primera vez):**
+   ```sh
+   chmod +x start.sh
+   ```
+
+3. **Ejecuta el proyecto (esto instalará dependencias, poblará la base de datos y levantará el servidor):**
+   ```sh
+   ./start.sh
+   ```
+
+Esto instalará automáticamente los requirements, ejecutará el script para poblar la base de datos (`run.py`) y levantará el servidor FastAPI en modo desarrollo.
+
+---
+
 ## Job automático de multas por préstamos atrasados
 
 Este proyecto incluye un **job automático** que revisa diariamente todos los préstamos activos y aplica multas a los usuarios por días de retraso:
