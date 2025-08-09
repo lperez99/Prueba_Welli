@@ -16,7 +16,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True, nullable=False)
     type = Column(Enum(UserType), nullable=False)
-    fines = Column(Integer, default=0.0)
+    fines = Column(Integer, default=0)
     books_on_loan = Column(Integer, default=0)  # Libros actualmente prestados
     loans = relationship("Loan", back_populates="user")
     reservations = relationship("Reservation", back_populates="user")
