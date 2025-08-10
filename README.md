@@ -83,3 +83,28 @@ This will:
 3. 🔄 Continue checking every minute for 3 minutes, processing any new expired reservations.
 
 💡 *You can adjust the reservation time and job frequency in `app/services/reserved_stock.py` for your testing needs.*
+
+---
+
+## 📈 Most Popular Books Job (Stock Increase)
+
+This project includes a job that reviews all books **every month** and increases the minimum stock for books with high sales:
+
+- 🔍 The job checks all books and counts their purchases (physical or digital) in the last month.
+- 📈 If a book has **more than 10 purchases** in that period, its `min_stock_for_sell` is increased by 3.
+- 📝 The change is printed in the console for easy verification.
+
+### ▶️ How to run the most popular books job manually
+
+From the project root, run:
+
+```sh
+python -m app.cronjobs.most_popular_book
+```
+
+This will:
+1. 🔍 Review all books for purchases in the last month.
+2. 📈 Increase the minimum stock for books with more than 10 purchases.
+3. 📝 Print the changes in the console for easy verification.
+
+💡 *You can adjust the review period and increase amount in `app/services/most_popular_book.py` for your needs.*
