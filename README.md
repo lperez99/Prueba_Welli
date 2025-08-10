@@ -171,6 +171,25 @@ Edit your crontab with `crontab -e` and add lines like these (replace `/path/to/
 
 ---
 
-**For the technical test:**  
-You can run each job manually as described in the sections above.  
-In production, use a scheduler to automate their execution at the recommended times.
+## 📊 Recommended Reports
+
+Implementing reports is essential for monitoring, decision-making, and improving the library’s service. Here are some recommended reports and why they are valuable:
+
+| Report                                   | Why is it useful?                                                                                  |
+|-------------------------------------------|----------------------------------------------------------------------------------------------------|
+| **Users with Most Purchases**             | Recognizes top customers and can inform loyalty or rewards programs.                               |
+| **Users with Most Loans**                 | Identifies users with high engagement and helps detect potential abuse or unusual borrowing patterns.|
+| **Outstanding Fines**                     | Helps recover revenue and encourages timely returns by tracking users with unpaid fines.           |
+| **Books Without Movement**                | Detects books with no sales or loans, informing decisions on weeding or promotional campaigns.     |
+| **Reservations Report**                   | Shows which books have the most reservations, helps manage waiting lists, and identifies high-demand titles that may need more stock. |
+| **Rejected/Approved Purchases**           | Analyzes reasons for purchase rejections and overall approval rates for process improvement.       |
+| **Activity Summary by Period**            | Provides a global view of library activity (sales, loans, returns, fines) for any given timeframe.|
+
+> **Why implement these reports?**  
+> - They support data-driven decisions for acquisitions, promotions, and inventory management.  
+> - They help improve user satisfaction by ensuring popular books are available and underused books are identified.  
+> - They provide transparency and accountability for library operations.
+
+---
+
+*You can implement these reports as database queries, admin dashboard views, or downloadable CSV/Excel files, depending on your needs and audience.*
