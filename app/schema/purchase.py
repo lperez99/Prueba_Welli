@@ -7,6 +7,7 @@ class PurchaseCreate(BaseModel):
     quantity: int
     type: str  # "physical" o "digital"
     status: str = "pending"  # "pending", "completed", "cancelled"
+    reserved_until: datetime | None = None
 
 class PurchaseOut(PurchaseCreate):
     id: int

@@ -3,7 +3,8 @@ from app.models.user import User, UserType
 from app.models.book import Book, BookStatus, BookCategory
 from app.models.loan import Loan, LoanStatus
 from app.models.reservation import Reservation, StatusReservation
-from app.models.purchase import Purchase, PurchaseType
+from app.models.purchase import Purchase, PurchaseType, PurchaseStatus
+from app.models.reservation import Reservation, StatusReservation
 from datetime import date, timedelta
 
 # Crear tablas
@@ -17,8 +18,10 @@ sample_users = [
     {"name": "Alice Johnson", "type": UserType.student, "fines": 0.0, "books_on_loan": 1},
     {"name": "Bob Smith", "type": UserType.teacher, "fines": 0.0, "books_on_loan": 2},
     {"name": "Carlos Pérez", "type": UserType.visitor, "fines": 0.0, "books_on_loan": 0},
-    # {"name": "Daniela Ruiz", "type": UserType.student, "fines": 0.0, "books_on_loan": 3},
-    # {"name": "Elena Gómez", "type": UserType.teacher, "fines": 0.0, "books_on_loan": 5},
+    {"name": "Daniela Ruiz", "type": UserType.student, "fines": 0.0, "books_on_loan": 3},
+    {"name": "Elena Gómez", "type": UserType.teacher, "fines": 0.0, "books_on_loan": 5},
+    {"name": "Sandra Castillo", "type": UserType.student, "fines": 30000.0, "books_on_loan": 0},
+    {"name": "Alejandro Gómez", "type": UserType.teacher, "fines": 0.0, "books_on_loan": 4},
 ]
 sample_books = [
     {
@@ -44,7 +47,7 @@ sample_books = [
         "stock_for_loan": 2
     },
     {
-        "title": "Historia de Chile",
+        "title": "Historia de Colombia",
         "author": "Pedro González",
         "category": BookCategory.history,
         "status": BookStatus.maintenance,
@@ -130,7 +133,7 @@ if db.query(Loan).count() == 0:
     users = db.query(User).all()
     books = db.query(Book).all()
 
-    # Diccionario de días por tipo de usuario
+    # # Diccionario de días por tipo de usuario
     LOAN_DAYS = {
         "student": 14,
         "teacher": 30,
@@ -143,6 +146,7 @@ if db.query(Loan).count() == 0:
         {"user": users[2], "book": books[2], "returned": False, "extended": False, "status": LoanStatus.active}
     ]
 
+    # Préstamos normales
     for l in sample_loans:
         user_type = getattr(l["user"], "type", None) or "visitor"
         loan_days = LOAN_DAYS.get(user_type, LOAN_DAYS["visitor"])
@@ -157,6 +161,29 @@ if db.query(Loan).count() == 0:
             status=l["status"]
         )
         db.add(loan)
+
+    # Préstamos retrasados (end_date en el pasado)
+    late_loan1 = Loan(
+        user_id=users[3].id,
+        book_id=books[3].id,
+        start_date=date.today() - timedelta(days=20),
+        end_date=date.today() - timedelta(days=10),  # Venció hace 10 días
+        returned=False,
+        extended=False,
+        status=LoanStatus.active
+    )
+    late_loan2 = Loan(
+        user_id=users[4].id,
+        book_id=books[4].id,
+        start_date=date.today() - timedelta(days=40),
+        end_date=date.today() - timedelta(days=31),  # Venció hace 25 días
+        returned=False,
+        extended=False,
+        status=LoanStatus.active
+    )
+    db.add(late_loan1)
+    db.add(late_loan2)
+
     db.commit()
     print("Préstamos insertados correctamente ✅")
 else:
@@ -185,3 +212,38 @@ if db.query(Reservation).count() == 0:
     print("Reservas insertadas correctamente ✅")
 else:
     print("La tabla de reservas ya tiene datos.")
+
+if db.query(Purchase).count() == 0:
+    users = db.query(User).all()
+    books = db.query(Book).all()
+    purchases = [
+        Purchase(
+            user_id=users[0].id,
+            book_id=books[0].id,
+            quantity=2,
+            total_price=books[0].price_physical * 2,
+            type=PurchaseType.physical,
+            status=PurchaseStatus.approved
+        ),
+        Purchase(
+            user_id=users[1].id,
+            book_id=books[1].id,
+            quantity=1,
+            total_price=books[1].price_digital,
+            type=PurchaseType.digital,
+            status=PurchaseStatus.pending
+        ),
+        Purchase(
+            user_id=users[2].id,
+            book_id=books[0].id,
+            quantity=3,
+            total_price=books[2].price_physical * 3,
+            type=PurchaseType.physical,
+            status=PurchaseStatus.pending
+        ),
+    ]
+    db.add_all(purchases)
+    db.commit()
+    print("Compras insertadas correctamente ✅")
+else:
+    print("La tabla de compras ya tiene datos.")

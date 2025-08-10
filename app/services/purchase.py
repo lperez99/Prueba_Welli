@@ -3,6 +3,7 @@ from app.models.user import User
 from app.models.book import Book, BookCategory
 from sqlalchemy.orm import Session
 from app.models.loan import Loan, LoanStatus
+from datetime import datetime, timedelta, UTC
 
 def create_purchase(db: Session, data):
     user = db.query(User).filter(User.id == data.user_id).first()
@@ -14,7 +15,6 @@ def create_purchase(db: Session, data):
     if user.fines > 20000:
         raise ValueError("No puedes comprar con multas mayores a $20.000.")
 
-    
     active_loan = db.query(Loan).filter(
         Loan.user_id == user.id,
         Loan.book_id == book.id,
@@ -24,7 +24,6 @@ def create_purchase(db: Session, data):
     if active_loan:
         raise ValueError("No puedes comprar un libro que tienes prestado actualmente.")
 
-    
     if data.type == "physical":
         if book.stock_physical_for_sell < data.quantity:
             raise ValueError("No hay suficiente stock físico.")
@@ -49,8 +48,6 @@ def create_purchase(db: Session, data):
         discount += 0.20
     if user.type == "student" and data.type == "digital":
         discount += 0.15
-        
-    
 
     total_price = price * data.quantity * (1 - discount)
 
@@ -59,7 +56,9 @@ def create_purchase(db: Session, data):
         book_id=book.id,
         quantity=data.quantity,
         total_price=total_price,
-        type=data.type
+        type=data.type,
+        status="pending",
+        reserved_until=datetime.now(UTC) + timedelta(minutes=10)  # Reserva por 10 minutos
     )
     db.add(purchase)
     db.commit()

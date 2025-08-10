@@ -24,6 +24,7 @@ class Purchase(Base):
     type = Column(Enum(PurchaseType), nullable=False)
     status = Column(Enum(PurchaseStatus), default=PurchaseStatus.pending)
     created_at = Column(DateTime, default=datetime.utcnow)
+    reserved_until = Column(DateTime, nullable=True)
 
     user = relationship("User")
     book = relationship("Book")
