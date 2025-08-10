@@ -4,7 +4,7 @@
 
 1. 🌀 **Clone the repository:**
    ```sh
-   git clone <URL_DEL_REPOSITORIO>
+   git clone https://github.com/lperez99/Prueba_Welli
    cd Prueba_Welli
    ```
 
@@ -126,3 +126,51 @@ From the project root, run:
 ```sh
 python -m app.cronjobs.least_popular_book
 ```
+
+This will:
+1. 🔍 Review all books for purchases in the last 6 months.
+2. 📉 Reduce the minimum stock for books with zero purchases.
+3. 📝 Print the changes in the console for easy verification.
+
+💡 *You can adjust the review period and reduction amount in `app/services/least_popular_book.py` for your needs.*
+
+---
+
+## ⏳ Job Scheduling in Production
+
+In a real production environment, these jobs should be scheduled to run automatically using a task scheduler like **cron** (Linux/macOS) or Task Scheduler (Windows).  
+Below are the recommended schedules for each job:
+
+| Job                        | Frequency (Production)         | Example cron expression           | Description                                      |
+|----------------------------|-------------------------------|-----------------------------------|--------------------------------------------------|
+| Reserved Stock             | Every minute (infinite loop)  | `* * * * *`                       | Processes pending purchases and stock reservation |
+| Most Popular Books         | 1st day of each month, 1:00AM | `0 1 1 * *`                       | Increases min stock for popular books            |
+| Least Popular Books        | Every 6 months, 1:00AM        | `0 1 1 1,7 *`                     | Decreases min stock for least popular books      |
+| Overdue Loan Fines         | Daily, 1:00AM                 | `0 1 * * *`                       | Applies fines for overdue loans                  |
+
+> **Note:** For this technical test, you can run all jobs manually using the provided commands.  
+> In production, add the appropriate cron lines to your server's crontab.
+
+### 🛠️ Example: How to schedule jobs with cron (Linux/macOS)
+
+Edit your crontab with `crontab -e` and add lines like these (replace `/path/to/project` with your actual path):
+
+```cron
+# Reserved Stock (every minute)
+* * * * * cd /path/to/project && .venv/bin/python -m app.services.reserved_stock
+
+# Most Popular Books (monthly)
+0 1 1 * * cd /path/to/project && .venv/bin/python -m app.cronjobs.most_popular_book
+
+# Least Popular Books (every 6 months)
+0 1 1 1,7 * cd /path/to/project && .venv/bin/python -m app.cronjobs.least_popular_book
+
+# Overdue Loan Fines (daily)
+0 1 * * * cd /path/to/project && .venv/bin/python -m app.cronjobs.pending_transactions
+```
+
+---
+
+**For the technical test:**  
+You can run each job manually as described in the sections above.  
+In production, use a scheduler to automate their execution at the recommended times.

@@ -45,9 +45,9 @@ if __name__ == "__main__":
     print("Procesando compras pendientes cuyo tiempo de reserva expiró (primer chequeo)...")
     process_pending_purchases()
 
-    # Revisa cada minuto durante 10 minutos adicionales
-    for i in range(30):
-        print(f"Esperando {i+1} minuto(s)...")
+    # Revisa cada minuto de forma infinita
+    while True:
+        print("Esperando 1 minuto...")
         time.sleep(60)
         print("Revisando nuevamente compras pendientes cuyo tiempo de reserva expiró...")
         process_pending_purchases()
