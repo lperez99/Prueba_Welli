@@ -64,7 +64,7 @@ or schedule its daily execution using tools like **cron** on your server.
 
 This project includes a **reserved stock job** that manages temporary stock reservations for pending purchases:
 
-- 🛒 When a purchase is created, its status is set to `pending` and the stock is reserved for 1 minute (`reserved_until`).
+- 🛒 When a purchase is created, its status is set to `pending` and the stock is reserved for 10 minutes (`reserved_until`).
 - ⏳ The job checks for pending purchases whose reservation time has expired and randomly approves or rejects them (for testing purposes).
 - ❌ If a purchase is rejected, the stock is returned to the book (for physical purchases).
 - ✅ If approved, the stock remains reduced.
