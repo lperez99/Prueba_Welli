@@ -108,3 +108,21 @@ This will:
 3. 📝 Print the changes in the console for easy verification.
 
 💡 *You can adjust the review period and increase amount in `app/services/most_popular_book.py` for your needs.*
+
+---
+
+## 📉 Least Popular Books Job (Stock Reduction)
+
+Every 6 months, the system runs a job that reviews all books and reduces the minimum stock for books **without any purchases (physical or digital) in the last 6 months**:
+
+- 🔍 The job checks all books and counts their purchases in the last 6 months.
+- 📉 If a book has **zero purchases** in that period, its `min_stock_for_sell` is reduced by 2.
+- 🚫 The minimum stock will never go below 2 (it is set to 2 if the reduction would make it lower or negative).
+
+### ▶️ How to run the least popular books job manually
+
+From the project root, run:
+
+```sh
+python -m app.cronjobs.least_popular_book
+```
